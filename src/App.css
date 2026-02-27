@@ -1,9 +1,9 @@
-/* ─────────────────────────────────────────────────────────────────────────────
-   App.css — стили калькулятора.
-   Без внешних библиотек, только стандартный CSS.
-   ───────────────────────────────────────────────────────────────────────────── */
+/* =============================================================================
+   App.css — стили калькулятора. Без внешних библиотек, только CSS.
+   ============================================================================= */
 
-/* Сброс отступов и установка box-sizing для всех элементов */
+/* Применяем box-sizing ко всем элементам страницы.
+   border-box: ширина элемента включает padding и border (интуитивнее работать). */
 *, *::before, *::after {
   box-sizing: border-box;
   margin: 0;
@@ -11,21 +11,22 @@
 }
 
 body {
+  /* system-ui — берёт шрифт ОС пользователя (без загрузки внешних шрифтов) */
   font-family: system-ui, -apple-system, 'Segoe UI', sans-serif;
   background: #f0f4ff;
   color: #1a1a2e;
-  min-height: 100vh;
+  min-height: 100vh; /* страница минимум на всю высоту экрана */
   padding: 32px 16px;
 }
 
-/* ── Карточка калькулятора ──────────────────────────────────────────────── */
+/* ── Белая карточка по центру ───────────────────────────────────────────── */
 .calculator {
   max-width: 680px;
-  margin: 0 auto;
+  margin: 0 auto; /* auto по бокам = центрирование */
   background: #ffffff;
   border-radius: 20px;
   padding: 40px 36px;
-  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.08);
+  box-shadow: 0 4px 32px rgba(0, 0, 0, 0.08); /* лёгкая тень */
 }
 
 /* ── Заголовок ──────────────────────────────────────────────────────────── */
@@ -35,7 +36,7 @@ body {
 }
 
 .header h1 {
-  font-size: 1.75rem;
+  font-size: 1.75rem; /* rem = относительно базового размера шрифта браузера (обычно 16px) */
   font-weight: 700;
   color: #2d3aff;
   margin-bottom: 8px;
@@ -46,54 +47,77 @@ body {
   color: #888;
 }
 
-/* ── Секции (шаги) ──────────────────────────────────────────────────────── */
+/* ── Секции (шаги 1–4) ──────────────────────────────────────────────────── */
 .sections {
   display: flex;
-  flex-direction: column;
-  gap: 28px;
+  flex-direction: column; /* дети идут друг под другом */
+  gap: 28px;              /* расстояние между секциями */
 }
 
 .section-title {
-  font-size: 0.85rem;
+  font-size: 0.8rem;
   font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: #aaa;
+  text-transform: uppercase; /* заглавные буквы через CSS, не в HTML */
+  letter-spacing: 0.07em;    /* межбуквенный интервал */
+  color: #bbb;
   margin-bottom: 12px;
 }
 
-/* ── Кнопки-карточки (тип проекта, сложность, срочность) ───────────────── */
+/* ── Кнопки выбора (тип / сложность / срочность) ───────────────────────── */
 .cards {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: wrap; /* если не влезают в строку — переносятся на следующую */
   gap: 10px;
 }
 
 .card {
-  padding: 10px 22px;
+  display: flex;
+  flex-direction: column; /* label сверху, description снизу */
+  align-items: flex-start;
+  gap: 3px;
+
+  padding: 12px 18px;
   border: 2px solid #e4e8ff;
-  border-radius: 10px;
+  border-radius: 12px;
   background: #ffffff;
-  font-size: 0.95rem;
-  font-family: inherit;
-  color: #333;
+  font-family: inherit; /* кнопки по умолчанию не наследуют шрифт — принудительно задаём */
   cursor: pointer;
+  text-align: left;
+
+  /* transition: плавная анимация при изменении свойств */
+  /* формат: свойство длительность | свойство длительность */
   transition: border-color 0.15s, background 0.15s, color 0.15s;
 }
 
 .card:hover {
-  border-color: #2d3aff;
+  border-color: #2d3aff; /* подсветка при наведении */
 }
 
-/* Выбранная кнопка */
+/* Выбранная кнопка — синий фон */
 .card--selected {
   background: #2d3aff;
   border-color: #2d3aff;
   color: #ffffff;
-  font-weight: 600;
 }
 
-/* ── Чекбоксы дополнительных услуг ─────────────────────────────────────── */
+.card-label {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: inherit; /* наследует цвет родителя (белый при .card--selected) */
+}
+
+/* Подсказка под названием */
+.card-desc {
+  font-size: 0.78rem;
+  color: #aaa;
+}
+
+/* Когда кнопка выбрана — подсказка светло-белая */
+.card--selected .card-desc {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ── Дополнительные услуги (чекбоксы) ──────────────────────────────────── */
 .extras {
   display: flex;
   flex-direction: column;
@@ -102,11 +126,11 @@ body {
 
 .extra-item {
   display: flex;
-  align-items: center;
+  align-items: center; /* выравниваем по центру по вертикали */
   gap: 12px;
   padding: 12px 16px;
   border: 2px solid #e4e8ff;
-  border-radius: 10px;
+  border-radius: 12px;
   cursor: pointer;
   transition: border-color 0.15s, background 0.15s;
 }
@@ -115,24 +139,24 @@ body {
   border-color: #2d3aff;
 }
 
-/* Отмеченный чекбокс */
+/* Выбранный чекбокс — синяя рамка и голубой фон */
 .extra-item--checked {
   border-color: #2d3aff;
   background: #f0f4ff;
 }
 
-/* Стилизация самого чекбокса через accent-color (поддерживается всеми
-   современными браузерами — Chrome 93+, Firefox 92+, Safari 15.4+) */
+/* accent-color задаёт цвет самого чекбокса (нативный элемент браузера).
+   Поддерживается Chrome 93+, Firefox 92+, Safari 15.4+ */
 .extra-item input[type="checkbox"] {
   width: 18px;
   height: 18px;
   cursor: pointer;
   accent-color: #2d3aff;
-  flex-shrink: 0;
+  flex-shrink: 0; /* запрещаем сжиматься, если текст длинный */
 }
 
 .extra-label {
-  flex: 1;
+  flex: 1; /* занимает всё доступное место между чекбоксом и процентом */
   font-size: 0.95rem;
 }
 
@@ -142,42 +166,78 @@ body {
   color: #2d3aff;
 }
 
-/* ── Блок итоговой цены ─────────────────────────────────────────────────── */
+/* ── Блок с итоговой ценой ──────────────────────────────────────────────── */
 .result {
   margin-top: 36px;
-  padding: 28px 32px;
-  background: linear-gradient(135deg, #2d3aff 0%, #6c63ff 100%);
-  border-radius: 14px;
+  padding: 24px 28px;
+  background: linear-gradient(135deg, #2d3aff 0%, #6c63ff 100%); /* диагональный градиент */
+  border-radius: 16px;
   display: flex;
-  justify-content: space-between;
+  justify-content: space-between; /* цена слева, кнопка справа */
   align-items: center;
-  gap: 16px;
+  gap: 20px;
+}
+
+.result-price-block {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
 }
 
 .result-label {
-  font-size: 1rem;
-  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.75); /* белый с прозрачностью 75% */
 }
 
 .result-price {
   font-size: 2rem;
   font-weight: 800;
   color: #ffffff;
-  white-space: nowrap;
+  white-space: nowrap; /* запрещаем перенос числа на новую строку */
 }
 
-/* ── Адаптив для маленьких экранов ─────────────────────────────────────── */
-@media (max-width: 480px) {
+/* ── Кнопка "Оформить заказ" ────────────────────────────────────────────── */
+.order-btn {
+  display: inline-block; /* <a> по умолчанию inline — нужен inline-block для padding */
+  padding: 14px 24px;
+  background: #ffffff;
+  color: #2d3aff;
+  font-size: 0.95rem;
+  font-weight: 700;
+  font-family: inherit;
+  border-radius: 10px;
+  text-decoration: none; /* убираем подчёркивание ссылки */
+  white-space: nowrap;
+  transition: opacity 0.15s, transform 0.1s;
+}
+
+.order-btn:hover {
+  opacity: 0.92;
+  transform: translateY(-1px); /* лёгкое поднятие при наведении */
+}
+
+.order-btn:active {
+  transform: translateY(0); /* при клике возвращается на место */
+}
+
+/* ── Адаптив для маленьких экранов (меньше 520px) ──────────────────────── */
+@media (max-width: 520px) {
   .calculator {
-    padding: 28px 20px;
+    padding: 28px 18px;
   }
 
+  /* На узких экранах цена и кнопка идут друг под другом */
   .result {
     flex-direction: column;
+    align-items: stretch;
     text-align: center;
   }
 
-  .result-price {
-    font-size: 1.75rem;
+  .result-price-block {
+    align-items: center;
+  }
+
+  .order-btn {
+    text-align: center;
   }
 }
