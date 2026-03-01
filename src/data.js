@@ -23,6 +23,7 @@ export const PROJECT_TYPES = [
   { id: 'landing', label: 'Сайт / лендинг',       description: 'Визитка или промо-страница',          basePrice: 5_000  },
   { id: 'webapp',  label: 'Веб-приложение',         description: 'Сервис с кабинетом и бизнес-логикой', basePrice: 25_000 },
   { id: 'bot',     label: 'Бот (Telegram/Discord)', description: 'Автоматизация в мессенджере',         basePrice: 10_000 },
+  { id: 'custom',  label: 'Свой вариант',            description: 'Нет в списке — обсудим цену',        basePrice: null   },
   //
   // Чтобы добавить новый тип — скопируй строку выше и заполни поля.
   // Пример: { id: 'mobile', label: 'Мобильное приложение', description: '...', basePrice: 40_000 },

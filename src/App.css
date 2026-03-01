@@ -93,6 +93,11 @@ body {
   border-color: #7c3aed; /* подсветка при наведении */
 }
 
+/* Кнопка "Свой вариант" — пунктирная рамка */
+.card--custom {
+  border-style: dashed;
+}
+
 /* Выбранная кнопка — синий фон */
 .card--selected {
   background: #7c3aed;

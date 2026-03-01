@@ -98,7 +98,7 @@ function buildOrderLink(projectId, complexityId, urgencyId, selectedExtras, tota
     `Сложность: ${complexity.label} (${complexity.description})\n` +
     `Срочность: ${urgency.label}\n` +
     `Доп. услуги: ${extraNames}\n\n` +
-    `Примерная стоимость: ${totalPrice.toLocaleString('ru-RU')} ₽\n\n` +
+    `Стоимость: ${totalPrice !== null ? totalPrice.toLocaleString('ru-RU') + ' ₽' : 'по договорённости'}\n\n` +
     `---\nРасскажите подробнее о вашем проекте:`;
 
   // encodeURIComponent — кодирует спецсимволы (пробелы, кирилицу и т.д.)
@@ -159,9 +159,13 @@ export default function App() {
     setContactInfo({ ...contactInfo, [fieldName]: newValue });
   }
 
+  // isCustom — выбран "Свой вариант": цену не считаем, она договорная
+  const isCustom = projectType === 'custom';
+
   // Считаем цену при каждой перерисовке (мгновенно, данных мало).
   // Объявляем ДО handleSubmit — чтобы функция могла безопасно использовать эту переменную.
-  const totalPrice = calculatePrice(projectType, complexity, urgency, extras);
+  // При isCustom не вызываем calculatePrice: у 'custom' нет basePrice, будет NaN.
+  const totalPrice = isCustom ? null : calculatePrice(projectType, complexity, urgency, extras);
 
   // Вызывается при нажатии "Отправить" в модальном окне.
   // Формирует mailto-ссылку и программно "кликает" по ней — браузер откроет почту.
@@ -201,7 +205,7 @@ export default function App() {
             {PROJECT_TYPES.map(type => (
               <button
                 key={type.id}
-                className={`card ${projectType === type.id ? 'card--selected' : ''}`}
+                className={`card ${type.id === 'custom' ? 'card--custom' : ''} ${projectType === type.id ? 'card--selected' : ''}`}
                 onClick={() => setProjectType(type.id)}
               >
                 <span className="card-label">{type.label}</span>
@@ -211,68 +215,74 @@ export default function App() {
           </div>
         </section>
 
-        {/* Шаг 2: Сложность */}
-        <section className="section">
-          <h2 className="section-title">2. Сложность</h2>
-          <div className="cards">
-            {COMPLEXITY_LEVELS.map(level => (
-              <button
-                key={level.id}
-                className={`card ${complexity === level.id ? 'card--selected' : ''}`}
-                onClick={() => setComplexity(level.id)}
-              >
-                <span className="card-label">{level.label}</span>
-                <span className="card-desc">{level.description}</span>
-              </button>
-            ))}
-          </div>
-        </section>
+        {/* Шаг 2: Сложность — скрыт при "Свой вариант" */}
+        {!isCustom && (
+          <section className="section">
+            <h2 className="section-title">2. Сложность</h2>
+            <div className="cards">
+              {COMPLEXITY_LEVELS.map(level => (
+                <button
+                  key={level.id}
+                  className={`card ${complexity === level.id ? 'card--selected' : ''}`}
+                  onClick={() => setComplexity(level.id)}
+                >
+                  <span className="card-label">{level.label}</span>
+                  <span className="card-desc">{level.description}</span>
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
 
-        {/* Шаг 3: Срочность */}
-        <section className="section">
-          <h2 className="section-title">3. Срочность</h2>
-          <div className="cards">
-            {URGENCY_OPTIONS.map(option => (
-              <button
-                key={option.id}
-                className={`card ${urgency === option.id ? 'card--selected' : ''}`}
-                onClick={() => setUrgency(option.id)}
-              >
-                <span className="card-label">{option.label}</span>
-                <span className="card-desc">{option.description}</span>
-              </button>
-            ))}
-          </div>
-        </section>
+        {/* Шаг 3: Срочность — скрыт при "Свой вариант" */}
+        {!isCustom && (
+          <section className="section">
+            <h2 className="section-title">3. Срочность</h2>
+            <div className="cards">
+              {URGENCY_OPTIONS.map(option => (
+                <button
+                  key={option.id}
+                  className={`card ${urgency === option.id ? 'card--selected' : ''}`}
+                  onClick={() => setUrgency(option.id)}
+                >
+                  <span className="card-label">{option.label}</span>
+                  <span className="card-desc">{option.description}</span>
+                </button>
+              ))}
+            </div>
+          </section>
+        )}
 
-        {/* Шаг 4: Дополнительные услуги (чекбоксы) */}
-        <section className="section">
-          <h2 className="section-title">4. Дополнительно</h2>
-          <div className="extras">
-            {EXTRA_SERVICES.map(service => (
-              <label
-                key={service.id}
-                className={`extra-item ${extras.includes(service.id) ? 'extra-item--checked' : ''}`}
-              >
-                <input
-                  type="checkbox"
-                  checked={extras.includes(service.id)}
-                  onChange={() => toggleExtra(service.id)}
-                />
-                <span className="extra-label">{service.label}</span>
-                <span className="extra-percent">+{service.extra * 100}%</span>
-              </label>
-            ))}
-          </div>
-        </section>
+        {/* Шаг 4: Дополнительные услуги — скрыт при "Свой вариант" */}
+        {!isCustom && (
+          <section className="section">
+            <h2 className="section-title">4. Дополнительно</h2>
+            <div className="extras">
+              {EXTRA_SERVICES.map(service => (
+                <label
+                  key={service.id}
+                  className={`extra-item ${extras.includes(service.id) ? 'extra-item--checked' : ''}`}
+                >
+                  <input
+                    type="checkbox"
+                    checked={extras.includes(service.id)}
+                    onChange={() => toggleExtra(service.id)}
+                  />
+                  <span className="extra-label">{service.label}</span>
+                  <span className="extra-percent">+{service.extra * 100}%</span>
+                </label>
+              ))}
+            </div>
+          </section>
+        )}
 
       </div>
 
       {/* Итоговая цена + кнопка заказа */}
       <div className="result">
         <div className="result-price-block">
-          <span className="result-label">Примерная стоимость</span>
-          <span className="result-price">{totalPrice.toLocaleString('ru-RU')} ₽</span>
+          <span className="result-label">{isCustom ? 'Стоимость проекта' : 'Примерная стоимость'}</span>
+          <span className="result-price">{isCustom ? 'Договорная' : `${totalPrice.toLocaleString('ru-RU')} ₽`}</span>
         </div>
 
         {/* Кнопка открывает модальное окно вместо прямой ссылки */}
@@ -368,7 +378,7 @@ export default function App() {
               {/* Итоговая цена внутри модального окна — для напоминания */}
               <div className="modal-price">
                 <span>Итого:</span>
-                <span className="modal-price-value">{totalPrice.toLocaleString('ru-RU')} ₽</span>
+                <span className="modal-price-value">{isCustom ? 'Договорная' : `${totalPrice.toLocaleString('ru-RU')} ₽`}</span>
               </div>
 
               <div className="modal-actions">
