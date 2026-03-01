@@ -78,9 +78,9 @@ function calculatePrice(projectId, complexityId, urgencyId, selectedExtras) {
 // При клике браузер откроет почтовый клиент с заполненным письмом.
 // =============================================================================
 function buildOrderLink(projectId, complexityId, urgencyId, selectedExtras, totalPrice, contactInfo) {
-  const project    = PROJECT_TYPES.find(p => p.id === projectId);
-  const complexity = COMPLEXITY_LEVELS.find(c => c.id === complexityId);
-  const urgency    = URGENCY_OPTIONS.find(u => u.id === urgencyId);
+  const project    = lookupById(PROJECT_TYPES,     projectId,    'project');
+  const complexity = lookupById(COMPLEXITY_LEVELS, complexityId, 'complexity');
+  const urgency    = lookupById(URGENCY_OPTIONS,    urgencyId,    'urgency');
 
   // Собираем названия доп. услуг через запятую, или 'нет' если ни одна не выбрана
   const extraNames = selectedExtras.length > 0
@@ -159,6 +159,10 @@ export default function App() {
     setContactInfo({ ...contactInfo, [fieldName]: newValue });
   }
 
+  // Считаем цену при каждой перерисовке (мгновенно, данных мало).
+  // Объявляем ДО handleSubmit — чтобы функция могла безопасно использовать эту переменную.
+  const totalPrice = calculatePrice(projectType, complexity, urgency, extras);
+
   // Вызывается при нажатии "Отправить" в модальном окне.
   // Формирует mailto-ссылку и программно "кликает" по ней — браузер откроет почту.
   function handleSubmit(event) {
@@ -176,9 +180,6 @@ export default function App() {
     setShowModal(false);
     setContactInfo({ name: '', phone: '', email: '', time: '' });
   }
-
-  // Считаем цену при каждой перерисовке (мгновенно, данных мало)
-  const totalPrice = calculatePrice(projectType, complexity, urgency, extras);
 
   // JSX: выглядит как HTML, но это JavaScript.
   // Фигурные скобки {} — "вставить значение JS-переменной или выражения"
