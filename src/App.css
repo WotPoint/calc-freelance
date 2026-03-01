@@ -426,3 +426,41 @@ body {
     text-align: center;
   }
 }
+
+/* ── Тёмная тема (автоматически по настройкам ОС) ──────────────────────── */
+/* prefers-color-scheme: dark — срабатывает, если в системе включена тёмная тема.
+   Переопределяем только цвета — отступы, размеры и структура не меняются. */
+@media (prefers-color-scheme: dark) {
+  body            { background: #0f1117; color: #e8eaf6; }
+  .calculator     { background: #1a1d2e; box-shadow: 0 4px 32px rgba(0,0,0,0.4); }
+  .header h1      { color: #6c75ff; }
+  .header p       { color: #9095b0; }
+  .section-title  { color: #5a5f80; }
+
+  .card           { background: #1a1d2e; border-color: #2e3255; color: #e8eaf6; }
+  .card:hover     { border-color: #6c75ff; }
+  .card--selected { background: #6c75ff; border-color: #6c75ff; }
+  .card-desc      { color: #9095b0; }
+
+  .extra-item          { border-color: #2e3255; }
+  .extra-item:hover    { border-color: #6c75ff; }
+  .extra-item--checked { background: #1e2240; border-color: #6c75ff; }
+  .extra-item input[type="checkbox"] { accent-color: #6c75ff; }
+  .extra-percent       { color: #6c75ff; }
+
+  .modal             { background: #1a1d2e; box-shadow: 0 8px 48px rgba(0,0,0,0.5); }
+  .modal-title       { color: #e8eaf6; }
+  .modal-close       { color: #9095b0; }
+  .modal-close:hover { background: #252945; color: #6c75ff; }
+  .modal-subtitle    { color: #9095b0; }
+
+  .form-label       { color: #9095b0; }
+  .form-input       { background: #252945; border-color: #2e3255; color: #e8eaf6; }
+  .form-input:focus { border-color: #6c75ff; }
+
+  .modal-price       { background: #252945; color: #9095b0; }
+  .modal-price-value { color: #6c75ff; }
+  .btn-cancel        { border-color: #2e3255; color: #9095b0; }
+  .btn-cancel:hover  { border-color: #6c75ff; color: #6c75ff; }
+  .btn-submit        { background: #6c75ff; }
+}
