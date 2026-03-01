@@ -23,27 +23,51 @@ import './App.css';
 //   Шаг 3: прибавляем наценку за срочность
 //           Пример: 14 500 ₽ × 1.5 (срочно) = 21 750 ₽
 // =============================================================================
-function calculatePrice(projectId, complexityId, urgencyId, selectedExtras) {
-  // .find() ищет в массиве первый элемент, у которого поле id совпадает с аргументом
-  const project    = PROJECT_TYPES.find(p => p.id === projectId);
-  const complexity = COMPLEXITY_LEVELS.find(c => c.id === complexityId);
-  const urgency    = URGENCY_OPTIONS.find(u => u.id === urgencyId);
+// Вспомогательная функция: ищет элемент по id в массиве
+// Если не нашла — бросает понятную ошибку вместо молчаливого краша
+function lookupById(collection, id, label) {
+  const item = collection.find(el => el.id === id);
+  if (!item) throw new Error(`Unknown ${label} id: ${id}`);
+  return item;
+}
 
-  // Шаг 1
-  let price = project.basePrice * complexity.multiplier;
+// Вспомогательная функция: считает суммарный процент всех выбранных доп. услуг
+// Например: SEO (0.2) + копирайтинг (0.15) → вернёт 0.35
+function calcExtrasPercent(selectedExtras) {
+  // Защита: если передали не массив (null, undefined и т.д.) — возвращаем 0
+  if (!Array.isArray(selectedExtras)) return 0;
 
-  // Шаг 2: суммируем проценты всех выбранных доп. услуг
-  let totalExtrasPercent = 0;
+  let total = 0;
   for (const extraId of selectedExtras) {
-    const service = EXTRA_SERVICES.find(s => s.id === extraId);
-    totalExtrasPercent += service.extra;
+    // Находим услугу по id и берём её процент
+    const service = lookupById(EXTRA_SERVICES, extraId, 'extra service');
+    total += service.extra;
   }
-  price = price * (1 + totalExtrasPercent);
+  return total;
+}
 
-  // Шаг 3
-  price = price * (1 + urgency.extra);
+function calculatePrice(projectId, complexityId, urgencyId, selectedExtras) {
+  // Находим полные объекты по переданным id
+  // Если какой-то id не существует — lookupById бросит ошибку
+  const project    = lookupById(PROJECT_TYPES,     projectId,    'project');
+  const complexity = lookupById(COMPLEXITY_LEVELS, complexityId, 'complexity');
+  const urgency    = lookupById(URGENCY_OPTIONS,    urgencyId,    'urgency');
 
-  return Math.round(price); // убираем копейки
+  // Шаг 1: базовая цена проекта × коэффициент сложности
+  // Например: 10 000 × 1.5 = 15 000
+  const priceAfterComplexity = project.basePrice * complexity.multiplier;
+
+  // Шаг 2: увеличиваем цену на суммарный процент доп. услуг
+  // Например: 15 000 × (1 + 0.35) = 20 250
+  const extrasPercent    = calcExtrasPercent(selectedExtras);
+  const priceAfterExtras = priceAfterComplexity * (1 + extrasPercent);
+
+  // Шаг 3: увеличиваем цену на процент срочности
+  // Например: 20 250 × (1 + 0.5) = 30 375
+  const finalPrice = priceAfterExtras * (1 + urgency.extra);
+
+  // Убираем копейки — пользователь видит целое число
+  return Math.round(finalPrice);
 }
 
 // =============================================================================
